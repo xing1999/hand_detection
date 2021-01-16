@@ -282,7 +282,8 @@ def nms_old(boxes, scores, overlap=0.5, top_k=200):
     return keep, count
 
 
-from ._ext import nms
+# from ._ext import nms
+from torchvision.ops import nms
 
 def nms_new(boxes, scores, overlap=0.5, top_k=200):
     """Apply non-maximum suppression at test time to avoid detecting too many
@@ -299,39 +300,10 @@ def nms_new(boxes, scores, overlap=0.5, top_k=200):
     # nms_old(boxes, scores, overlap, top_k)
     # print("nms_new:.>>>>>>>>>>>>>>>>>")
 
-    dets = torch.cat((boxes, scores), dim=1)
-    dets = dets.type(torch.FloatTensor)
-    if boxes.numel() == 0:
-        return keep
-
-
-    scores = dets[:,4]
-    idx = scores.sort(0, descending=True)[1]  # sort in ascending order
+    keep = nms(boxes, scores[:,0], overlap)
+    keep_size = min(len(keep), top_k)
+    return keep[:keep_size], keep_size
     
-    
-    idx = idx[0:top_k]
-    dets = dets[idx].contiguous()
-
-    scores2 = dets[:,4]
-    idx2 = scores2.sort(0, descending=True)[1]  # sort in ascending order
-
-
-    x1 = dets[:, 0]
-    y1 = dets[:, 1]
-    x2 = dets[:, 2]
-    y2 = dets[:, 3]
-    areas = torch.mul(x2 - x1, y2 - y1)
-
-    # I = I[v >= 0.01]
-    #dets = dets[idx].contiguous()
-    keep = torch.LongTensor(dets.size(0))
-    num_out = torch.LongTensor(1)
-    nms.cpu_nms(keep, num_out, dets, idx2, areas, overlap)
-
-    
-    keep = idx[keep[:num_out[0]]].cuda().contiguous()
-
-    return keep,num_out[0]
 
 
 def nms_new_gpu(boxes, scores, overlap=0.5, top_k=200):
@@ -349,19 +321,6 @@ def nms_new_gpu(boxes, scores, overlap=0.5, top_k=200):
     # nms_old(boxes, scores, overlap, top_k)
     # print("nms_new:.>>>>>>>>>>>>>>>>>")
 
-    dets = torch.cat((boxes, scores), dim=1)
-    if boxes.numel() == 0:
-        return keep
-    
-    idx = scores.sort(0, descending=True)[1]  # sort in ascending order
-    # I = I[v >= 0.01]
-    dets = dets[idx[0:top_k]].contiguous()
-    keep = torch.LongTensor(dets.size(0))
-    num_out = torch.LongTensor(1)
-    nms.gpu_nms(keep, num_out, dets, overlap)
+    keep = nms(boxes, scores, overlap)
+    return keep, len(keep)
 
-    #print(keep.size())
-    #print(num_out.size())
-    #print(idx[keep[:num_out[0]].cuda()].contiguous().size())
-
-    return idx[keep[:num_out[0]].cuda()].contiguous().view(-1),num_out[0]
