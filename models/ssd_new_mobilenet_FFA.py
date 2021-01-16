@@ -30,7 +30,7 @@ _CONV_DEFS = [
 ]
 
 ## 
-def mobilenet_v1_base(final_endpoint='features.Conv2d_13_pointwise',
+def mobilenet_v1_base(final_endpoint='features_Conv2d_13_pointwise',
                       min_depth=8,
                       depth_multiplier=1.0,
                       conv_defs=_CONV_DEFS,
@@ -78,7 +78,7 @@ def mobilenet_v1_base(final_endpoint='features.Conv2d_13_pointwise',
 
     in_channels = 3
     for i, conv_def in enumerate(conv_defs):
-        end_point_base = 'features.Conv2d_%d' % i
+        end_point_base = 'features_Conv2d_%d' % i
 
         if output_stride is not None and current_stride == output_stride:
             layer_stride = 1
@@ -105,6 +105,7 @@ def mobilenet_v1_base(final_endpoint='features.Conv2d_13_pointwise',
                 ('pointwise', conv_pw(in_channels, out_channels, 1, stride=1))]))
 
             if end_point_base + '_pointwise' == final_endpoint:
+                import pdb; pdb.set_trace()
                 return nn.Sequential(end_points)
 
         else:
@@ -141,7 +142,7 @@ class SSD(nn.Module):
         self.size = 300
         
         ## 38,19,10,5,3,1
-        self.src_names = ['features.Conv2d_8', 'features.Conv2d_11', 'features.Conv2d_13', 'Conv2d_14', 'Conv2d_15', 'Conv2d_16']
+        self.src_names = ['features_Conv2d_8', 'features_Conv2d_11', 'features_Conv2d_13', 'Conv2d_14', 'Conv2d_15', 'Conv2d_16']
         self.src_num = len(self.src_names)
         self.src_channels = [512, 512, 1024, 512, 256, 256]
         self.feat_channels = [256, 256, 256, 256, 256, 256]
