@@ -400,7 +400,8 @@ def test_net(save_folder, net, cuda, dataset, transform, top_k,
         if args.cuda:
             x = x.cuda()
         _t['im_detect'].tic()
-        detections = net(x).data
+        with torch.no_grad():
+            detections = net(x).data
         detect_time = _t['im_detect'].toc(average=False)
         all_det_time += detect_time
 
