@@ -13,20 +13,6 @@ Our implementation is adapted from [the PyTorch version of SSD](https://github.c
 
 
 ### Preparation
-<!-- 1. Due to some compatibility issues, we recommend to install PyTorch 0.3.0 and Python 3.6.8, which our project currently supports.  -->
-
-<!-- 2. Get the code.  -->
-    <!-- ```Shell -->
-    <!-- git clone https://github.com/yangli18/hand_detection.git -->
-    <!-- ``` -->
-<!-- 3. Download [the Oxford hand dataset](http://www.robots.ox.ac.uk/~vgg/data/hands/) and create the LMDB file for the training data. -->
-    <!-- ```Shell -->
-    <!-- sh data/scripts/Oxford_hand_dataset.sh -->
-    <!-- ``` -->
-<!-- 4. Compile the NMS code (from [ruotianluo/pytorch-faster-rcnn](https://github.com/ruotianluo/pytorch-faster-rcnn/tree/0.3)). -->
-    <!-- ```Shell -->
-    <!-- sh layers/src/make.sh -->
-    <!-- ``` -->
 
 What to install:
 - PyTorch (tested 1.7)
@@ -59,3 +45,16 @@ You can also download it from [here](https://github.com/ruotianluo/pytorch-mobil
     python eval_speed.py --trained_model weights/ssd_new_mobilenet_FFA.pth --version ssd_new_mobilenet_FFA
     ```   
 
+### Interface
+```
+from interface import SSD_Interface
+
+# Load model weight
+model = SSD_Interface(weight_path)
+
+# Simple calling warper by process function
+output = model.process("data/sample/input.jpg")
+
+import json
+json.dumps(output, indent=4)
+```

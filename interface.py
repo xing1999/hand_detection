@@ -39,6 +39,25 @@ class SSD_Interface(object):
 
     @torch.no_grad()
     def process(self, image):
+        """ Main process for SSD Model
+
+        Args:
+            image (str, Image)
+
+        Return: List[Dict]
+
+        Example output:
+           [
+		{
+		    "top": 462,
+		    "left": 342,
+		    "bottom": 498,
+		    "right": 391,
+		    "cls_name": "hand",
+		    "confidence": 0.3468829393386841
+		}
+	   ]
+        """
         image, metadata = self.image_loader(image)
 
         w, h = metadata["width"], metadata["height"]
