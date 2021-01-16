@@ -105,7 +105,6 @@ def mobilenet_v1_base(final_endpoint='features_Conv2d_13_pointwise',
                 ('pointwise', conv_pw(in_channels, out_channels, 1, stride=1))]))
 
             if end_point_base + '_pointwise' == final_endpoint:
-                import pdb; pdb.set_trace()
                 return nn.Sequential(end_points)
 
         else:
