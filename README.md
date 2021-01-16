@@ -17,7 +17,16 @@ Our implementation is adapted from [the PyTorch version of SSD](https://github.c
 What to install:
 - PyTorch (tested 1.7)
 - torchvision
-- opencv (3.x or 4.x is all acceptable)
+- opencv (3.x or 4.x is all acceptable, litterally we only use imread)
+- scipy
+- lmdb
+
+Due to stupid error might occur on Windows when installing PyTorch, I suggest use conda to install PyTorch follow tutorial on [pytorch.org](https://pytorch.org)
+
+For other package:
+``` bash
+pip install opencv-python scipy lmdb
+```
 
 
 ### Training
@@ -46,7 +55,8 @@ You can also download it from [here](https://github.com/ruotianluo/pytorch-mobil
     ```   
 
 ### Interface
-```
+
+``` python
 from interface import SSD_Interface
 
 # Load model weight
