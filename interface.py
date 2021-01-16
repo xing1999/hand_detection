@@ -101,7 +101,7 @@ if __name__ == "__main__":
     weight_path = "./weights/xing_weight.pth"
     model = SSD_Interface(weight_path)
 
-    image_path = "./data/hand_dataset/training_dataset/training_data/images/Buffy_1.jpg"
+    image_path = "./data/sample/input.jpg"
     output = model.process(image_path)
 
     image = Image.open(image_path)
