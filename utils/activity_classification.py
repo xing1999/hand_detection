@@ -9,14 +9,14 @@ class ClassifyActivityRulebase(object):
         self.h_thres = h_thres
         self.default = default
 
-    def process(self, prev: Optional[dict,None], current: dict) -> str:
+    def process(self, prev: Optional[dict], current: dict) -> str:
         if prev is not None:
             prev = Box(prev)
         current = Box(current)
         return self._process(prev, current)
 
 
-    def _process(self, prev_frame: Box, item: Box) -> str:
+    def _process(self, prev_frame: Optional[Box], item: Box) -> str:
         if prev_frame is None:
             return "idle"
 
