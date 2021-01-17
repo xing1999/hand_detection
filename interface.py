@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from models.ssd_new_mobilenet_FFA import build_ssd
+from utils.activity_classification import ClassifyActivityRulebase
 
 class SSD_Interface(object):
     def __init__(
@@ -35,6 +36,9 @@ class SSD_Interface(object):
         self.core.load_state_dict(c)
         self.core.to(self.device)
         self.core.eval()
+
+        self.activity_classifier = ClassifyActivityRulebase()
+        self.prev_frame_output = []
 
 
     @torch.no_grad()
@@ -80,8 +84,11 @@ class SSD_Interface(object):
                 .astype(np.float32, copy=False)
 
             json_result = [self.jsontify(b, j) for b in cls_dets]
+            results.extend(json_result)
 
-        return json_result
+        self.prev_frame_output = results
+
+        return results
 
     def jsontify(self, single_box, cls_index):
         conf = float(single_box[-1])
@@ -96,7 +103,22 @@ class SSD_Interface(object):
             "cls_name": cls_name,
             "confidence": conf,
         }
+
+        info["activity_type"] = self.classify_activity(info)
         return info
+
+    def classify_activity(self, info):
+        """ Classify activity based on previous frame """
+
+        if len(self.prev_frame_output) == 0:
+            prev_frame = None
+        elif len(self.prev_frame_output) > 1:
+            # Not implement object mapping yet...
+            prev_frame = None
+        else:
+            prev_frame = self.prev_frame_output[0]
+
+        return self.activity_classifier.process(prev_frame, info)
 
 
     def image_loader(self, image):
