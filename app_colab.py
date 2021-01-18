@@ -1,3 +1,5 @@
+from flask_ngrok import run_with_ngrok
+
 # helper
 import os
 import numpy as np
@@ -20,6 +22,7 @@ model = SSD_Interface(
 
     
 app = Flask(__name__)
+run_with_ngrok(app)
 
 
 # Ignore error 15 omp
@@ -65,4 +68,4 @@ def results():
         return jsonify(model_result)
 
 # app.run("localhost", "3000", debug=True)
-app.run("0.0.0.0", "3000", debug=True)
+app.run()
