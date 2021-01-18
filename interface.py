@@ -134,7 +134,7 @@ class SSD_Interface(object):
         if isinstance(image, str):
             image = cv2.imread(image, cv2.IMREAD_COLOR)
         elif isinstance(image, Image.Image):
-            image = np.array(image.convert("RGB"))
+            image = np.array(image.convert("BGR"))
 
         h, w, c = image.shape
         input_dim = self.input_dim
