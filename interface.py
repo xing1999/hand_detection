@@ -7,12 +7,15 @@ from PIL import Image, ImageDraw
 from models.ssd_new_mobilenet_FFA import build_ssd
 from utils.activity_classification import ClassifyActivityRulebase
 
+from utils.classes import Box
+
 class SSD_Interface(object):
     def __init__(
         self,
         weight_path,
         list_classes=None,
         conf_thres=0.3,
+        only_output_best=True,
     ):
         input_dim = 300 # const due to model design
 
@@ -39,6 +42,8 @@ class SSD_Interface(object):
 
         self.activity_classifier = ClassifyActivityRulebase()
         self.prev_frame_output = []
+
+        self.only_output_best = only_output_best
 
 
     @torch.no_grad()
@@ -84,6 +89,9 @@ class SSD_Interface(object):
                 .astype(np.float32, copy=False)
 
             json_result = [self.jsontify(b, j) for b in cls_dets]
+
+            if self.only_output_best:
+                json_result = [max(json_result, key=lambda x: Box(x).area)]
             results.extend(json_result)
 
         self.prev_frame_output = results
