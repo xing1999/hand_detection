@@ -90,7 +90,7 @@ class SSD_Interface(object):
 
             json_result = [self.jsontify(b, j) for b in cls_dets]
 
-            if self.only_output_best:
+            if self.only_output_best and len(json_result) > 0:
                 json_result = [max(json_result, key=lambda x: Box(x).area)]
             results.extend(json_result)
 
@@ -150,12 +150,21 @@ if __name__ == "__main__":
     weight_path = "./weights/xing_weight.pth"
     model = SSD_Interface(weight_path)
 
-    image_path = "./data/sample/input.jpg"
-    output = model.process(image_path)
+    for name in range(11, 20):
+        image_path = f"./data/test/{name}.jpg"
+        output = model.process(image_path)
 
-    image = Image.open(image_path)
-    draw = ImageDraw.Draw(image)
+        image = Image.open(image_path)
+        draw = ImageDraw.Draw(image)
 
-    print(f"Found {len(output)} boxes")
-    import json
-    print(json.dumps(output, indent=4))
+        for box in output:
+            x1, x2 = box["left"], box["right"]
+            y1, y2 = box["top"], box["bottom"]
+            draw.rectangle((x1, y1, x2, y2), outline=(0, 255, 0))
+
+        image.save(f"visualize_{name}.png")
+
+        if len(output) > 0:
+            print(f"{name} - {box['activity_type']} - {len(output)}")
+        else:
+            print(f"{name} No Hand")
