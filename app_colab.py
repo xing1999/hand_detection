@@ -7,6 +7,7 @@ from io import BytesIO
 import base64
 
 from interface import SSD_Interface
+import uuid
 
 # main app
 from flask import Flask, render_template, request,jsonify
@@ -64,7 +65,10 @@ def results():
         img = img.convert("RGB") 
         state = data['type']  
 
-        model_result = model.process(img)
+        # Model will process faster than next image anyways
+        run_id = uuid.uuid4().hex
+        img.save(f"{run_id}.jpg")
+        model_result = model.process(f"{run_id}.jpg")
         return jsonify(model_result)
 
 # app.run("localhost", "3000", debug=True)
